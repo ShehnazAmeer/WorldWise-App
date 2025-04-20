@@ -9,6 +9,8 @@ import Login from './pages/Login';
 import CitiesList from "./components/CitiesList";
 import CountriesList from "./components/CountriesList";
 import './index.css';
+import City from "./components/City";
+import Form from "./components/Form";
 
 const BASE_URL='http://localhost:8000'
 
@@ -18,11 +20,12 @@ export default function App() {
     console.log(cities)
 
     const countries = cities.reduce((arr, city) => {
-        if (!arr.map(el => el.country).includes(city.country)) {
-            return [...arr, { countryName: city.country, countryEmoji: city.emoji }]
-        } else return arr;
+        if (!arr.map(el => el.countryName).includes(city.country)) {
+            
+           return [...arr, { countryName: city.country, countryEmoji: city.emoji }] 
+        } 
+        else return arr;
     }, []);
-    console.log(countries);
 
 
     useEffect(function () {
@@ -52,9 +55,11 @@ export default function App() {
                 <Route path='product' element={<Product />} />
 
                 <Route path='app' element={<AppLayout />}>
-                    <Route path='cities' element={<CitiesList cities={cities} isLoading={isLoading}  />} />
+                    <Route path='cities' element={<CitiesList cities={cities} isLoading={isLoading} />} />
+                    <Route path='cities/:id' element={<City/>} />
+                    
                     <Route path='countries' element={<CountriesList countries={countries} />} />
-                    <Route path='form' element={<p>Form</p>} />
+                    <Route path='form' element={<Form/>} />
                     <Route index element={<CitiesList cities={cities} isLoading={isLoading} />}/>
                 </Route>
 

@@ -1,6 +1,7 @@
 import styles from './CountriesList.module.css';
 import CountryItem from './CountryItem';
-function CountriesList({countries}) {  
+function CountriesList({ countries }) { 
+    console.log(countries)
     return (
         <ul className={styles.countryList} >
             {
