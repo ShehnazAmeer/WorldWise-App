@@ -50,9 +50,9 @@ function City() {
           Check out {cityName} on Wikipedia &rarr;
         </a>
       </div>
-
+ 
       <div>
-        <ButtonBack />
+        
       </div>
     </div>
   );
