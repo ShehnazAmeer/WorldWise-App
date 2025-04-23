@@ -7,11 +7,13 @@ const CitiesContext = createContext();
 const ACTIONS = {
     fetchCitites: 'fetchCities',
     loadedCities: 'isLoaded',
+    fetchCurrentCity:'fetchCity',
 }
 
 const initialState = {
     cities: [],
     isLoading: false,
+    currentCity:{}
     
 }
 
@@ -25,8 +27,9 @@ function reducer(state, action) {
     }
 }
 
-function CitiesProvider({ children }) {
+function CitiesProvider({ children }) { 
     const [state, dispatch] = useReducer(reducer, initialState);
+        const [currentCity, setCurrentCity] = useState({});
     const { cities, isLoading } = state;
         console.log(cities)
     

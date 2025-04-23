@@ -1,5 +1,5 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { useCities, CitiesProvider } from './context/CitiesContext';
+import { CitiesProvider } from './context/CitiesContext';
 import Homepage from "./pages/Homepage";
 import Pricing from "./pages/Pricing";
 import Product from "./pages/Product";
