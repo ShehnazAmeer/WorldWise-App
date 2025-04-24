@@ -21,17 +21,18 @@ function reducer(state, action) {
     switch (action.type) {
         case ACTIONS.fetchCitites:
             return { ...state, cities: action.payload };
+        case ACTIONS.loadedCities:
+            return { ...state, isLoading: action.payload };
+        case ACTIONS.fetchCurrentCity:
+            return { ...state, currentCity: action.payload };
         default:
             return state;
-        
     }
 }
 
 function CitiesProvider({ children }) { 
     const [state, dispatch] = useReducer(reducer, initialState);
-        const [currentCity, setCurrentCity] = useState({});
-    const { cities, isLoading } = state;
-        console.log(cities)
+    const { cities, isLoading, currentCity } = state;
     
         const countries = cities.reduce((arr, city) => {
             if (!arr.map(el => el.countryName).includes(city.country)) {
@@ -57,8 +58,23 @@ function CitiesProvider({ children }) {
                     dispatch({ type: ACTIONS.loadedCities, payload: false });
                 }
             }
-            fetchCities()
+            fetchCities();
         }, []);
+    
+    async function getCity(id) {
+        try {
+            dispatch({ type: ACTIONS.loadedCities, payload: true });
+            const res = await fetch(`${BASE_URL}/cities/${id}`);
+            const data = await res.json();
+            dispatch({ type: ACTIONS.fetchCurrentCity, payload: data });
+         }
+        catch (error) {
+            alert('there is something wrong with data')
+        }
+        finally {
+            dispatch({ type: ACTIONS.loadedCities, payload: true });
+        }
+    }
 
     return (
         <CitiesContext.Provider value={
@@ -66,6 +82,8 @@ function CitiesProvider({ children }) {
                 cities,
                 countries,
                 isLoading,
+                currentCity,
+                getCity,
             }
         }>
             {children}

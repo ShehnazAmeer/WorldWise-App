@@ -9,6 +9,7 @@ const formatDate = (date) =>
   }).format(new Date(date));
 
 function City() {
+  
   // TEMP DATA
   const currentCity = {
     cityName: "Lisbon",
