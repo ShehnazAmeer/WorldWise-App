@@ -32,6 +32,7 @@ function reducer(state, action) {
 
 function CitiesProvider({ children }) { 
     const [state, dispatch] = useReducer(reducer, initialState);
+    
     const { cities, isLoading, currentCity } = state;
     
         const countries = cities.reduce((arr, city) => {
@@ -72,7 +73,7 @@ function CitiesProvider({ children }) {
             alert('there is something wrong with data')
         }
         finally {
-            dispatch({ type: ACTIONS.loadedCities, payload: true });
+            dispatch({ type: ACTIONS.loadedCities, payload: false });
         }
     }
 

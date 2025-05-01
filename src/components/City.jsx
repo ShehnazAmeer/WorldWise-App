@@ -1,37 +1,29 @@
 import { useEffect } from 'react';
 import { useCities } from '../context/CitiesContext';
 import styles from './City.module.css';
+import Spinner from './Spinner';
 import { useParams, useSearchParams } from 'react-router-dom';
+import BackButton from './BackButton';
 
-function formatDate(date) {
-    new Intl.DateTimeFormat('en', {
-        dat: 'numeric',
-        month: 'long',
-        year: 'numeric',
-        weekday: 'long',
-    }).format(new Date(date));
-}
+const formatDate = (date) => new Intl.DateTimeFormat('en', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    weekday: 'long',
+}).format(new Date(date));
 
 function City() {
     const { id } = useParams();
-    const { getCity, currentCity } = useCities();
-    console.log(currentCity);
+    const { getCity, currentCity,isLoading } = useCities();
+
     
     useEffect(function () {
         getCity(id);
     },[id])
 
-
-
-    // const currentCity = {
-    //     cityName: 'lisbon',
-    //     emoji: '🇵🇹',
-    //     date: '2027-10-31T15:59:59.138Z',
-    //     notes:'My favorite city so far!'
-    // }
-
     const { cityName, emoji, date, notes } = currentCity;
 
+    if(isLoading) return <Spinner />
 
     return (
         <div className={styles.city}>
@@ -60,7 +52,9 @@ function City() {
                     Check Out ${cityName} on WikiPedia &rarr;
                 </a>
             </div>
-            <div></div>
+            <div>
+                <BackButton/>
+            </div>
        </div>
     ) 
 }
