@@ -1,6 +1,7 @@
 .mapContainer {
   flex: 1;
   height: 100%;
+  width:100%;
   background-color: var(--color-dark--2);
   position: relative;
 }

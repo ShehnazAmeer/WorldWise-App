@@ -3,8 +3,8 @@ function CountryItem({ country }) {
     
     return (
         <li className={styles.countryItem}>
-            <span> {country.countryName} </span>
-            <span> {country.countryEmoji} </span>
+            <span> {country.country} </span>
+            <span> {country.emoji} </span>
         </li>
     )
 }
