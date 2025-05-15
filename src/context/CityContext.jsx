@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const CitiesContext = createContext();
 
@@ -49,6 +50,28 @@ function CitiesProvider({ children }) {
         finally {
             setIsLoading(false);
         }  
+    };
+
+    async function createNewCity(newCity) {
+        
+        try { 
+            setIsLoading(true);
+            const res = await fetch(`http://localhost:8000/cities`, {
+                method: 'POST',
+                body: JSON.stringify(newCity),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            const data = await res.json();
+            setCities(cities => [...cities, data]);
+        }
+        catch (err) { 
+            // alert('there was error in creating new City');
+        }
+        finally {
+            setIsLoading(false);
+        }
     }
 
     
@@ -60,6 +83,7 @@ function CitiesProvider({ children }) {
                 countries,
                 currentCity,
                 getCity,
+                createNewCity,
 
             }}
         >
