@@ -1,61 +1,141 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const CitiesContext = createContext();
 
-const BASE_URL='http://localhost:8000'
+const BASE_URL = 'http://localhost:8000';
+
+const initialState = {
+    cities: [],
+    isLoading: false,
+    currentCity: [],
+    error:''
+}
+
+const ACTIONS = {
+    isLoading: 'city/loaded',
+    getCities: 'cities/created',
+    createCurrentCity: 'city/currentCity',
+    addNewCity: 'city/addNewCity',
+    deleteCity: 'city/deleteCity',
+    error:'rejected'  
+}
+
+function reducer(state, action) {
+    switch (action.type) {
+         case ACTIONS.isLoading:
+            return (
+                {
+                    ...state,
+                    isLoading: true,
+                }
+            );
+        case ACTIONS.getCities:
+            return (
+                {
+                    ...state,
+                    cities: action.payload,
+                    isLoading:false,
+                }
+            );
+ 
+        case ACTIONS.createCurrentCity:
+            return (
+                {
+                    ...state,
+                    currentCity: action.payload,
+                    isLoading: false,
+                    
+                }
+            );
+        case ACTIONS.addNewCity:
+            return (
+                {
+                    ...state,
+                    cities: [...state.cities, action.payload],
+                    isLoading: false,
+                    currentCity:action.payload,
+                }
+            );
+        
+        case ACTIONS.deleteCity:
+            return (
+                {
+                    ...state,
+                    cities: state.cities.filter(city =>
+                        city.id !== action.payload
+                    ),
+                    isLoading: false,
+                    currentCity:{}
+                }
+            );
+        
+        case ACTIONS.error:
+            return (
+                {
+                    ...state,
+                    isLoading: false,
+                    error:action.payload,
+                }
+            )
+
+
+        default:
+            return state;
+    }
+}  
 
 
 function CitiesProvider({ children }) {
-    const [cities, setCities] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [currentCity, setCurrentCity] = useState([]);
+    const [state, dispatch] = useReducer(reducer, initialState);
+
+    const { cities, isLoading, currentCity,error } = state;
 
     useEffect(function () {
         async function fetchCities() {
+            dispatch({ type: ACTIONS.isLoading});
             try {
-                setIsLoading(true);
                 const res = await fetch(`${BASE_URL}/cities`);
                 const data = await res.json();
-                console.log(data)
-                setCities(data);
-                setIsLoading(false);
+                
+                dispatch({ type: ACTIONS.getCities, payload: data });
             }
             catch (err) {
-                console.log(err);
+                dispatch({ type: ACTIONS.error, payload: 'There is an Error in fetching Cities Data' });
             }
         }
         fetchCities()
     }, []);
 
+    
+
     const countries = cities.reduce((arr, city) => {
-        if (!arr.map(city => city.country).includes(city.country))
-            return [...arr, { country: city.country, emoji: city.emoji }];
+        if (!arr.map(city => city.countryName).includes(city.countryName))
+            return [...arr, { country: city.countryName, emoji: city.emoji }];
         else return arr;
         
     }, []);
 
     async function getCity(id) {
+        if (+id === currentCity.id) return;
+        dispatch({ type: ACTIONS.isLoading });
          try { 
-            setIsLoading(true);
+             dispatch({ type: ACTIONS.isLoading, payload: true });
             const res = await fetch(`${BASE_URL}/cities/${id}`);
 
             const data = await res.json();
 
-            setCurrentCity(data);
+             dispatch({ type: ACTIONS.createCurrentCity, payload: data });
         }
         catch (err) {
-            alert('something happend in fetching current city')
+            dispatch({type:ACTIONS.error,payload:'something happend in fetching current city'})
          }
-        finally {
-            setIsLoading(false);
-        }  
     };
 
     async function createNewCity(newCity) {
+        dispatch({ type: ACTIONS.isLoading });
         
         try { 
-            setIsLoading(true);
             const res = await fetch(`http://localhost:8000/cities`, {
                 method: 'POST',
                 body: JSON.stringify(newCity),
@@ -64,14 +144,26 @@ function CitiesProvider({ children }) {
                 },
             });
             const data = await res.json();
-            setCities(cities => [...cities, data]);
+            dispatch({type:ACTIONS.addNewCity,payload:data})
         }
         catch (err) { 
-            // alert('there was error in creating new City');
+            dispatch({type:ACTIONS.error,payload:'there was error in creating new City'});
         }
-        finally {
-            setIsLoading(false);
-        }
+    }
+
+    async function deleteCity(id) {
+        
+        dispatch({ type: ACTIONS.isLoading });
+        try {
+           await fetch(`${BASE_URL}/cities/${id}`, {
+                method: "DELETE",
+           });
+            
+            dispatch({ type: ACTIONS.deleteCity, payload: id});  
+         }
+        catch (err) {
+            dispatch({ type: ACTIONS.error, payload: 'There was an error in deleting City' });
+         }
     }
 
     
@@ -82,8 +174,10 @@ function CitiesProvider({ children }) {
                 isLoading,
                 countries,
                 currentCity,
+                error,
                 getCity,
                 createNewCity,
+                deleteCity,
 
             }}
         >

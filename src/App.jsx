@@ -11,6 +11,7 @@ import CountriesList from "./components/CountriesList";
 import Form from "./components/Form";
 import City from './components/City';
 import { CitiesProvider } from './context/CityContext';
+import Login from './pages/Login';
 
 export default function App() {
     return (
@@ -19,12 +20,11 @@ export default function App() {
             <Routes>
                 <Route index element={<Homepage />}/>
                 <Route path='pricing' element={<Pricing />}/>
-                <Route path='product' element={<Product />}/>
+                <Route path='product' element={<Product />} />
+                 <Route path='login' element={<Login/>} />
                 <Route path='*' element={<PageNotFound />}/>
                 <Route path='app' element={<AppLayout />}>
-                    
-                    
-                    
+                   
                     {/* <Route index element={<CitiesList cities={cities} isLoading={isLoading} />} /> */}
 
                     <Route index element={<Navigate to='cities' replace/>}/>
@@ -35,7 +35,10 @@ export default function App() {
 
                     <Route path='countries' element={<CountriesList  />} />
                     <Route path='form' element={<Form/>} />
-                </Route>
+                    </Route>
+                
+                    
+                    
            </Routes>
             </BrowserRouter>
         </CitiesProvider>
